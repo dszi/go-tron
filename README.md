@@ -21,6 +21,8 @@
 - **Optimized for Go**: Provides idiomatic Go interfaces.
 - **Secure and Efficient**: Designed for high-performance blockchain applications.
 
+### ⚠️ Alpha Release
+
 ---
 
 ## Installation
