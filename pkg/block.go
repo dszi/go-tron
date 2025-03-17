@@ -62,3 +62,15 @@ func (g *GrpcClient) GetBlockByID(id string) (*core.Block, error) {
 	}
 	return result, nil
 }
+
+// GetNextMaintenanceTime queries the next maintenance time.
+func (g *GrpcClient) GetNextMaintenanceTime() (*api.NumberMessage, error) {
+	ctx, cancel := g.getContext()
+	defer cancel()
+
+	nm, err := g.Client.GetNextMaintenanceTime(ctx, new(api.EmptyMessage))
+	if err != nil {
+		return nil, fmt.Errorf("GetNextMaintenanceTime error: %w", err)
+	}
+	return nm, nil
+}

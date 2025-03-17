@@ -104,7 +104,7 @@ func (g *GrpcClient) CreateAccount(from, addr string) (*api.TransactionExtention
 	if err != nil {
 		return nil, fmt.Errorf("CreateAccount RPC error: %w", err)
 	}
-	if err := checkTxResult(tx); err != nil {
+	if err := validateTx(tx); err != nil {
 		return nil, err
 	}
 	return tx, nil
@@ -129,7 +129,7 @@ func (g *GrpcClient) UpdateAccount(from, accountName string) (*api.TransactionEx
 	if err != nil {
 		return nil, fmt.Errorf("UpdateAccount RPC error: %w", err)
 	}
-	if err := checkTxResult(tx); err != nil {
+	if err := validateTx(tx); err != nil {
 		return nil, err
 	}
 	return tx, nil

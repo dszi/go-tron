@@ -101,6 +101,23 @@ func (g *GrpcClient) CreateAssetIssue(from, name, description, abbr, urlStr stri
 	return tx, nil
 }
 
+// GetAssetIssueList queries the list of all issued tokens.
+// If page is -1, returns the full list.
+func (g *GrpcClient) GetAssetIssueList(page int64, limit ...int64) (*api.AssetIssueList, error) {
+	ctx, cancel := g.getContext()
+	defer cancel()
+
+	if page == -1 {
+		return g.Client.GetAssetIssueList(ctx, new(api.EmptyMessage))
+	}
+
+	useLimit := int64(10)
+	if len(limit) == 1 {
+		useLimit = limit[0]
+	}
+	return g.Client.GetPaginatedAssetIssueList(ctx, GetPaginatedMessage(page*useLimit, useLimit))
+}
+
 // TransferAsset transfers tokens.
 func (g *GrpcClient) TransferAsset(from, toAddress, assetName string, amount int64) (*api.TransactionExtention, error) {
 	contract := &core.TransferAssetContract{}
@@ -157,9 +174,9 @@ func (g *GrpcClient) ParticipateAssetIssue(from, issuerAddress, tokenID string, 
 	return tx, nil
 }
 
-// GetAssetIssueList queries the list of all issued tokens.
+// GetPaginatedAssetIssueList queries the list of all issued tokens.
 // If page is -1, returns the full list.
-func (g *GrpcClient) GetAssetIssueList(page int64, limit ...int) (*api.AssetIssueList, error) {
+func (g *GrpcClient) GetPaginatedAssetIssueList(page int64, limit ...int64) (*api.AssetIssueList, error) {
 	ctx, cancel := g.getContext()
 	defer cancel()
 
@@ -169,7 +186,7 @@ func (g *GrpcClient) GetAssetIssueList(page int64, limit ...int) (*api.AssetIssu
 
 	useLimit := int64(10)
 	if len(limit) == 1 {
-		useLimit = int64(limit[0])
+		useLimit = limit[0]
 	}
 	return g.Client.GetPaginatedAssetIssueList(ctx, GetPaginatedMessage(page*useLimit, useLimit))
 }
@@ -203,4 +220,30 @@ func (g *GrpcClient) GetAssetIssueById(id string) (*core.AssetIssueContract, err
 	defer cancel()
 
 	return g.Client.GetAssetIssueById(ctx, GetMessageBytes([]byte(id)))
+}
+
+// UpdateAsset updates asset details such as description and limit.
+func (g *GrpcClient) UpdateAsset(from, description, urlStr string, newLimit, newPublicLimit int64) (*api.TransactionExtention, error) {
+	addr, err := base58.DecodeCheck(from)
+	if err != nil {
+		return nil, fmt.Errorf("invalid address: %w", err)
+	}
+
+	contract := &core.UpdateAssetContract{
+		OwnerAddress:   addr,
+		Description:    []byte(description),
+		Url:            []byte(urlStr),
+		NewLimit:       newLimit,
+		NewPublicLimit: newPublicLimit,
+	}
+
+	ctx, cancel := g.getContext()
+	defer cancel()
+
+	tx, err := g.Client.UpdateAsset2(ctx, contract)
+	if err != nil {
+		return nil, fmt.Errorf("UpdateAsset failed: %w", err)
+	}
+
+	return tx, validateTx(tx)
 }

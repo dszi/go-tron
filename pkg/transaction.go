@@ -112,3 +112,47 @@ func (g *GrpcClient) GetTransactionInfoByID(id string) (*core.TransactionInfo, e
 	}
 	return txi, nil
 }
+
+// GetTransactionFromPending retrieves a pending transaction by its ID.
+func (g *GrpcClient) GetTransactionFromPending(id string) (*core.Transaction, error) {
+	req := new(api.BytesMessage)
+	var err error
+
+	req.Value, err = hex.FromHex(id)
+	if err != nil {
+		return nil, fmt.Errorf("GetTransactionFromPending: failed to decode id: %w", err)
+	}
+
+	ctx, cancel := g.getContext()
+	defer cancel()
+
+	tx, err := g.Client.GetTransactionFromPending(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("GetTransactionFromPending: %w", err)
+	}
+	return tx, nil
+}
+
+// GetTransactionListFromPending retrieves the list of pending transaction IDs.
+func (g *GrpcClient) GetTransactionListFromPending() (*api.TransactionIdList, error) {
+	ctx, cancel := g.getContext()
+	defer cancel()
+
+	result, err := g.Client.GetTransactionListFromPending(ctx, new(api.EmptyMessage))
+	if err != nil {
+		return nil, fmt.Errorf("GetTransactionListFromPending: %w", err)
+	}
+	return result, nil
+}
+
+// TotalTransaction retrieves the total number of transactions.
+func (g *GrpcClient) TotalTransaction() (*api.NumberMessage, error) {
+	ctx, cancel := g.getContext()
+	defer cancel()
+
+	totalTx, err := g.Client.TotalTransaction(ctx, new(api.EmptyMessage))
+	if err != nil {
+		return nil, fmt.Errorf("TotalTransaction error: %w", err)
+	}
+	return totalTx, nil
+}

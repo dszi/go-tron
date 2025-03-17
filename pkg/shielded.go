@@ -1,5 +1,3 @@
-package pkg
-
 //
 // Copyright (C) 2024 dszi
 //
@@ -8,102 +6,72 @@ package pkg
 // Repository: https://github.com/dszi/go-tron
 //
 
-import (
-	"fmt"
+package pkg
 
-	hex "github.com/dszi/go-tron/common/hexutil"
+import (
 	"github.com/dszi/go-tron/pb/api"
-	"github.com/dszi/go-tron/pb/core"
 )
 
-// GetBurnTrx retrieves the total burned TRX.
-func (g *GrpcClient) GetBurnTrx() (*api.NumberMessage, error) {
+// GetSpendingKey retrieves a spending key.
+func (g *GrpcClient) GetSpendingKey() (*api.BytesMessage, error) {
 	ctx, cancel := g.getContext()
 	defer cancel()
 
-	result, err := g.Client.GetBurnTrx(ctx, new(api.EmptyMessage))
-	if err != nil {
-		return nil, fmt.Errorf("GetBurnTrx: %w", err)
-	}
-	return result, nil
+	return g.Client.GetSpendingKey(ctx, new(api.EmptyMessage))
 }
 
-// GetTransactionFromPending retrieves a pending transaction by its ID.
-func (g *GrpcClient) GetTransactionFromPending(id string) (*core.Transaction, error) {
-	req := new(api.BytesMessage)
-	var err error
-
-	req.Value, err = hex.FromHex(id)
-	if err != nil {
-		return nil, fmt.Errorf("GetTransactionFromPending: failed to decode id: %w", err)
-	}
-
+// GetExpandedSpendingKey retrieves the expanded spending key.
+func (g *GrpcClient) GetExpandedSpendingKey(key string) (*api.ExpandedSpendingKeyMessage, error) {
 	ctx, cancel := g.getContext()
 	defer cancel()
 
-	tx, err := g.Client.GetTransactionFromPending(ctx, req)
-	if err != nil {
-		return nil, fmt.Errorf("GetTransactionFromPending: %w", err)
-	}
-	return tx, nil
+	return g.Client.GetExpandedSpendingKey(ctx, &api.BytesMessage{Value: []byte(key)})
 }
 
-// GetTransactionListFromPending retrieves the list of pending transaction IDs.
-func (g *GrpcClient) GetTransactionListFromPending() (*api.TransactionIdList, error) {
+// GetAkFromAsk retrieves `Ak` from `Ask`.
+func (g *GrpcClient) GetAkFromAsk(ak string) (*api.BytesMessage, error) {
 	ctx, cancel := g.getContext()
 	defer cancel()
 
-	result, err := g.Client.GetTransactionListFromPending(ctx, new(api.EmptyMessage))
-	if err != nil {
-		return nil, fmt.Errorf("GetTransactionListFromPending: %w", err)
-	}
-	return result, nil
+	return g.Client.GetAkFromAsk(ctx, &api.BytesMessage{Value: []byte(ak)})
 }
 
-// GetPendingSize queries the size of the pending transaction pool.
-func (g *GrpcClient) GetPendingSize() (*api.NumberMessage, error) {
+// GetNkFromNsk retrieves `Nk` from `Nsk`.
+func (g *GrpcClient) GetNkFromNsk(nk string) (*api.BytesMessage, error) {
 	ctx, cancel := g.getContext()
 	defer cancel()
 
-	result, err := g.Client.GetPendingSize(ctx, new(api.EmptyMessage))
-	if err != nil {
-		return nil, fmt.Errorf("GetPendingSize: %w", err)
-	}
-	return result, nil
+	return g.Client.GetNkFromNsk(ctx, &api.BytesMessage{Value: []byte(nk)})
 }
 
-// GetBandwidthPrices retrieves the current bandwidth prices.
-func (g *GrpcClient) GetBandwidthPrices() (*api.PricesResponseMessage, error) {
+// GetIncomingViewingKey retrieves an incoming viewing key.
+func (g *GrpcClient) GetIncomingViewingKey(ak, nk string) (*api.IncomingViewingKeyMessage, error) {
 	ctx, cancel := g.getContext()
 	defer cancel()
 
-	result, err := g.Client.GetBandwidthPrices(ctx, new(api.EmptyMessage))
-	if err != nil {
-		return nil, fmt.Errorf("GetBandwidthPrices: %w", err)
-	}
-	return result, nil
+	return g.Client.GetIncomingViewingKey(ctx, &api.ViewingKeyMessage{Ak: []byte(ak), Nk: []byte(nk)})
 }
 
-// GetEnergyPrices retrieves the current energy prices.
-func (g *GrpcClient) GetEnergyPrices() (*api.PricesResponseMessage, error) {
+// GetDiversifier retrieves a diversifier message.
+func (g *GrpcClient) GetDiversifier() (*api.DiversifierMessage, error) {
 	ctx, cancel := g.getContext()
 	defer cancel()
 
-	result, err := g.Client.GetEnergyPrices(ctx, new(api.EmptyMessage))
-	if err != nil {
-		return nil, fmt.Errorf("GetEnergyPrices: %w", err)
-	}
-	return result, nil
+	return g.Client.GetDiversifier(ctx, new(api.EmptyMessage))
 }
 
-// GetMemoFee retrieves the memo fee.
-func (g *GrpcClient) GetMemoFee() (*api.PricesResponseMessage, error) {
+// GetRcm retrieves a random commitment.
+func (g *GrpcClient) GetRcm() (*api.BytesMessage, error) {
 	ctx, cancel := g.getContext()
 	defer cancel()
 
-	result, err := g.Client.GetMemoFee(ctx, new(api.EmptyMessage))
-	if err != nil {
-		return nil, fmt.Errorf("GetMemoFee: %w", err)
-	}
-	return result, nil
+	return g.Client.GetRcm(ctx, new(api.EmptyMessage))
+}
+
+// GetNewShieldedAddress generates a new shielded address.
+func (g *GrpcClient) GetNewShieldedAddress() (*api.ShieldedAddressInfo, error) {
+	ctx, cancel := g.getContext()
+	defer cancel()
+
+	return g.Client.GetNewShieldedAddress(ctx, new(api.EmptyMessage))
 }

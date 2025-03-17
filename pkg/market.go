@@ -100,3 +100,15 @@ func (g *GrpcClient) GetMarketOrderById(id string) (*core.MarketOrder, error) {
 	}
 	return order, nil
 }
+
+// GetBurnTrx retrieves the total burned TRX.
+func (g *GrpcClient) GetBurnTrx() (*api.NumberMessage, error) {
+	ctx, cancel := g.getContext()
+	defer cancel()
+
+	result, err := g.Client.GetBurnTrx(ctx, new(api.EmptyMessage))
+	if err != nil {
+		return nil, fmt.Errorf("GetBurnTrx: %w", err)
+	}
+	return result, nil
+}

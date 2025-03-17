@@ -26,14 +26,50 @@ func (g *GrpcClient) ListNodes() (*api.NodeList, error) {
 	return nodeList, nil
 }
 
-// TotalTransaction retrieves the total number of transactions.
-func (g *GrpcClient) TotalTransaction() (*api.NumberMessage, error) {
+// GetPendingSize queries the size of the pending transaction pool.
+func (g *GrpcClient) GetPendingSize() (*api.NumberMessage, error) {
 	ctx, cancel := g.getContext()
 	defer cancel()
 
-	totalTx, err := g.Client.TotalTransaction(ctx, new(api.EmptyMessage))
+	result, err := g.Client.GetPendingSize(ctx, new(api.EmptyMessage))
 	if err != nil {
-		return nil, fmt.Errorf("TotalTransaction error: %w", err)
+		return nil, fmt.Errorf("GetPendingSize: %w", err)
 	}
-	return totalTx, nil
+	return result, nil
+}
+
+// GetBandwidthPrices retrieves the current bandwidth prices.
+func (g *GrpcClient) GetBandwidthPrices() (*api.PricesResponseMessage, error) {
+	ctx, cancel := g.getContext()
+	defer cancel()
+
+	result, err := g.Client.GetBandwidthPrices(ctx, new(api.EmptyMessage))
+	if err != nil {
+		return nil, fmt.Errorf("GetBandwidthPrices: %w", err)
+	}
+	return result, nil
+}
+
+// GetEnergyPrices retrieves the current energy prices.
+func (g *GrpcClient) GetEnergyPrices() (*api.PricesResponseMessage, error) {
+	ctx, cancel := g.getContext()
+	defer cancel()
+
+	result, err := g.Client.GetEnergyPrices(ctx, new(api.EmptyMessage))
+	if err != nil {
+		return nil, fmt.Errorf("GetEnergyPrices: %w", err)
+	}
+	return result, nil
+}
+
+// GetMemoFee retrieves the memo fee.
+func (g *GrpcClient) GetMemoFee() (*api.PricesResponseMessage, error) {
+	ctx, cancel := g.getContext()
+	defer cancel()
+
+	result, err := g.Client.GetMemoFee(ctx, new(api.EmptyMessage))
+	if err != nil {
+		return nil, fmt.Errorf("GetMemoFee: %w", err)
+	}
+	return result, nil
 }

@@ -14,19 +14,7 @@ import (
 	"github.com/dszi/go-tron/common/base58"
 	"github.com/dszi/go-tron/pb/api"
 	"github.com/dszi/go-tron/pb/core"
-	"google.golang.org/protobuf/proto"
 )
-
-// checkTxResult checks the transaction response for validity.
-func checkTxResult(tx *api.TransactionExtention) error {
-	if proto.Size(tx) == 0 {
-		return fmt.Errorf("bad transaction")
-	}
-	if tx.GetResult().GetCode() != 0 {
-		return fmt.Errorf("%s", tx.GetResult().GetMessage())
-	}
-	return nil
-}
 
 // VoteWitnessAccount submits a vote for super representative candidates.
 func (g *GrpcClient) VoteWitnessAccount(from string, witnessMap map[string]int64) (*api.TransactionExtention, error) {
@@ -57,7 +45,67 @@ func (g *GrpcClient) VoteWitnessAccount(from string, witnessMap map[string]int64
 	if err != nil {
 		return nil, fmt.Errorf("VoteWitnessAccount RPC error: %w", err)
 	}
-	if err := checkTxResult(tx); err != nil {
+	if err := validateTx(tx); err != nil {
+		return nil, err
+	}
+	return tx, nil
+}
+
+// ListWitnesses queries the list of super representative candidates.
+func (g *GrpcClient) ListWitnesses() (*api.WitnessList, error) {
+	ctx, cancel := g.getContext()
+	defer cancel()
+
+	witnessList, err := g.Client.ListWitnesses(ctx, new(api.EmptyMessage))
+	if err != nil {
+		return nil, fmt.Errorf("ListWitnesses RPC error: %w", err)
+	}
+	return witnessList, nil
+}
+
+// CreateWitness applies to become a super representative candidate.
+func (g *GrpcClient) CreateWitness(from, urlStr string) (*api.TransactionExtention, error) {
+	contract := &core.WitnessCreateContract{
+		Url: []byte(urlStr),
+	}
+	var err error
+	contract.OwnerAddress, err = base58.DecodeCheck(from)
+	if err != nil {
+		return nil, fmt.Errorf("CreateWitness: failed to decode from address: %w", err)
+	}
+
+	ctx, cancel := g.getContext()
+	defer cancel()
+
+	tx, err := g.Client.CreateWitness2(ctx, contract)
+	if err != nil {
+		return nil, fmt.Errorf("CreateWitness RPC error: %w", err)
+	}
+	if err := validateTx(tx); err != nil {
+		return nil, err
+	}
+	return tx, nil
+}
+
+// UpdateWitness updates the website URL of a super representative candidate.
+func (g *GrpcClient) UpdateWitness(from, urlStr string) (*api.TransactionExtention, error) {
+	contract := &core.WitnessUpdateContract{
+		UpdateUrl: []byte(urlStr),
+	}
+	var err error
+	contract.OwnerAddress, err = base58.DecodeCheck(from)
+	if err != nil {
+		return nil, fmt.Errorf("UpdateWitness: failed to decode from address: %w", err)
+	}
+
+	ctx, cancel := g.getContext()
+	defer cancel()
+
+	tx, err := g.Client.UpdateWitness2(ctx, contract)
+	if err != nil {
+		return nil, fmt.Errorf("UpdateWitness RPC error: %w", err)
+	}
+	if err := validateTx(tx); err != nil {
 		return nil, err
 	}
 	return tx, nil
@@ -98,67 +146,7 @@ func (g *GrpcClient) UpdateBrokerage(from string, brokerage int32) (*api.Transac
 	if err != nil {
 		return nil, fmt.Errorf("UpdateBrokerage RPC error: %w", err)
 	}
-	if err := checkTxResult(tx); err != nil {
-		return nil, err
-	}
-	return tx, nil
-}
-
-// ListWitnesses queries the list of super representative candidates.
-func (g *GrpcClient) ListWitnesses() (*api.WitnessList, error) {
-	ctx, cancel := g.getContext()
-	defer cancel()
-
-	witnessList, err := g.Client.ListWitnesses(ctx, new(api.EmptyMessage))
-	if err != nil {
-		return nil, fmt.Errorf("ListWitnesses RPC error: %w", err)
-	}
-	return witnessList, nil
-}
-
-// CreateWitness applies to become a super representative candidate.
-func (g *GrpcClient) CreateWitness(from, urlStr string) (*api.TransactionExtention, error) {
-	contract := &core.WitnessCreateContract{
-		Url: []byte(urlStr),
-	}
-	var err error
-	contract.OwnerAddress, err = base58.DecodeCheck(from)
-	if err != nil {
-		return nil, fmt.Errorf("CreateWitness: failed to decode from address: %w", err)
-	}
-
-	ctx, cancel := g.getContext()
-	defer cancel()
-
-	tx, err := g.Client.CreateWitness2(ctx, contract)
-	if err != nil {
-		return nil, fmt.Errorf("CreateWitness RPC error: %w", err)
-	}
-	if err := checkTxResult(tx); err != nil {
-		return nil, err
-	}
-	return tx, nil
-}
-
-// UpdateWitness updates the website URL of a super representative candidate.
-func (g *GrpcClient) UpdateWitness(from, urlStr string) (*api.TransactionExtention, error) {
-	contract := &core.WitnessUpdateContract{
-		UpdateUrl: []byte(urlStr),
-	}
-	var err error
-	contract.OwnerAddress, err = base58.DecodeCheck(from)
-	if err != nil {
-		return nil, fmt.Errorf("UpdateWitness: failed to decode from address: %w", err)
-	}
-
-	ctx, cancel := g.getContext()
-	defer cancel()
-
-	tx, err := g.Client.UpdateWitness2(ctx, contract)
-	if err != nil {
-		return nil, fmt.Errorf("UpdateWitness RPC error: %w", err)
-	}
-	if err := checkTxResult(tx); err != nil {
+	if err := validateTx(tx); err != nil {
 		return nil, err
 	}
 	return tx, nil

@@ -97,14 +97,14 @@ For a complete list, see the [API documentation](./pkg/README.md).
 
 The following APIs are planned for future implementation:
 
-- `GetTransactionsFromThis`
-- `GetTransactionsToThis`
-- `DeployContract`
-- `TriggerContract`
-- `ScanShieldedTRC20NotesByIvk`
-- `MarketSellAsset`
-- `MarketCancelOrder`
-- `GetBlockBalanceTrace`
+- `GetMerkleTreeVoucherInfo`
+- `ScanNoteByIvk`
+- `ScanNoteByOvk`
+- `GetZenPaymentAddress`
+- `CreateShieldedTransactionWithoutSpendAuthSig`
+- `GetShieldTransactionHash`
+- `CreateSpendAuthSig`
+- `CreateShieldNullifier`
 
 For the full roadmap, visit the [development plan](./pkg/README.md).
 

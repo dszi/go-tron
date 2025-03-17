@@ -4,82 +4,111 @@ This document lists the RPC API interfaces that have been implemented in go-tron
 
 ## Implemented Interfaces
 
+### Account Management
+
 - GetAccount
 - GetAccountBalance
 - GetAccountResource
-- CreateTransaction
-- BroadcastTransaction
 - CreateAccount
 - UpdateAccount
-- VoteWitnessAccount
-- GetBrokerageInfo
 - GetRewardInfo
-- UpdateBrokerage
-- CreateAssetIssue
-- ListWitnesses
-- CreateWitness
-- UpdateWitness
-- TransferAsset
-- ParticipateAssetIssue
-- ListNodes
-- GetAssetIssueList
-- GetAssetIssueByAccount
-- GetAssetIssueByName
-- GetAssetIssueById
-- GetNowBlock
-- GetBlockByNum
-- TotalTransaction
+
+### Transactions
+
+- CreateTransaction
+- BroadcastTransaction
 - GetTransactionByID
+- GetTransactionInfoByID
+- GetTransactionFromPending
+- GetTransactionListFromPending
+- TotalTransaction
+
+### Resource Management
+
 - FreezeBalance
 - UnfreezeBalance
 - WithdrawBalance
 - UnfreezeAsset
-- GetNextMaintenanceTime
-- GetTransactionInfoByID
+- UnfreezeBalanceV2
+- WithdrawExpireUnfreeze
+- DelegateResource
+- UnDelegateResource
+- CancelAllUnfreezeV2
+
+### Witnesses Management
+
+- VoteWitnessAccount
+- ListWitnesses
+- CreateWitness
+- UpdateWitness
+- GetBrokerageInfo
+- UpdateBrokerage
+
+### Asset Management
+
+- CreateAssetIssue
+- GetAssetIssueList
+- GetPaginatedAssetIssueList
+- GetAssetIssueByAccount
+- GetAssetIssueByName
+- GetAssetIssueById
+- TransferAsset
+- ParticipateAssetIssue
+- UpdateAsset
+
+### Block Management
+
+- GetNowBlock
+- GetBlockByNum
 - GetBlockByID
+- GetNextMaintenanceTime
+
+### Market Management
+
 - GetMarketOrderByAccount
 - GetMarketPairList
 - GetMarketOrderListByPair
 - GetMarketPriceByPair
 - GetMarketOrderById
 - GetBurnTrx
-- UnfreezeBalanceV2
-- WithdrawExpireUnfreeze
-- DelegateResource
-- UnDelegateResource
-- GetTransactionFromPending
-- GetTransactionListFromPending
-- GetPendingSize
-- CancelAllUnfreezeV2
-- GetBandwidthPrices
-- GetEnergyPrices
-- GetMemoFee
 
-## Planned Interfaces
+### Smart Contracts
 
-- getTransactionsFromThis
-- getTransactionsToThis
-- UpdateAsset
-- GetPaginatedAssetIssueList
 - DeployContract
 - TriggerContract
-- CreateShieldedTransaction
-- GetMerkleTreeVoucherInfo
-- ScanNoteByOvk
+
+### Shielded & Privacy
+
 - GetSpendingKey
 - GetExpandedSpendingKey
 - GetAkFromAsk
 - GetNkFromNsk
 - GetIncomingViewingKey
 - GetDiversifier
-- GetZenPaymentAddress
 - GetRcm
+- GetNewShieldedAddress
+
+### Network
+
+- ListNodes
+- GetPendingSize
+- GetBandwidthPrices
+- GetEnergyPrices
+- GetMemoFee
+
+## Planned Interfaces
+
+
+- CreateShieldedTransaction
+- GetMerkleTreeVoucherInfo
+- ScanNoteByIvk
+- ScanNoteByOvk
+- GetZenPaymentAddress
 - IsSpend
 - CreateShieldedTransactionWithoutSpendAuthSig
 - GetShieldTransactionHash
 - CreateSpendAuthSig
 - CreateShieldNullifier
-- GetNewShieldedAddress
 - CreateShieldedContractParameters
 - CreateShieldedContractParametersWithoutAsk
 - ScanShieldedTRC20NotesbyIvk
@@ -89,6 +118,3 @@ This document lists the RPC API interfaces that have been implemented in go-tron
 - MarketSellAsset
 - MarketCancelOrder
 - GetBlockBalanceTrace
-
----
-

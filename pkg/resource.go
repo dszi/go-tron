@@ -120,18 +120,6 @@ func (g *GrpcClient) UnfreezeAsset(from string) (*api.TransactionExtention, erro
 	return tx, nil
 }
 
-// GetNextMaintenanceTime queries the next maintenance time.
-func (g *GrpcClient) GetNextMaintenanceTime() (*api.NumberMessage, error) {
-	ctx, cancel := g.getContext()
-	defer cancel()
-
-	nm, err := g.Client.GetNextMaintenanceTime(ctx, new(api.EmptyMessage))
-	if err != nil {
-		return nil, fmt.Errorf("GetNextMaintenanceTime error: %w", err)
-	}
-	return nm, nil
-}
-
 // UnfreezeBalanceV2 unfreezes TRX (new version).
 func (g *GrpcClient) UnfreezeBalanceV2(from string, resource core.ResourceCode, unfreezeBalance int64) (*api.TransactionExtention, error) {
 	contract := &core.UnfreezeBalanceV2Contract{}
